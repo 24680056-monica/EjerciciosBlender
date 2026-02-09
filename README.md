@@ -62,4 +62,42 @@ crear_poligono_2d("Poligono2D", lados=6, radio=5)
 ```
 Lo que generará un hexágono con un radio de 5, asi es como se ve: <br>
 <img width="894" height="706" alt="image" src="https://github.com/user-attachments/assets/71eb6a1c-2eb3-475f-afa1-9a06abee1d43" />
+# Código completo
+```python
+import bpy
+import math
+
+def crear_poligono_2d(nombre, lados, radio):
+    #crear una nueva malla y un nuevo objeto
+    malla = bpy.data.meshes.new(nombre)
+    objeto = bpy.data.objects.new(nombre, malla)
+    
+    #vincular el objeto a la escena actual
+    bpy.context.collection.objects.link(objeto)
+    
+    vertices = []
+    aristas = []
+    
+    #Calculo de vertices usando coordenadas polares a cartesianas
+    for i in range(lados):
+        angulos = 2 * math.pi * i / lados
+        x = radio * math.cos(angulos)
+        y = radio * math.sin(angulos)
+        vertices.append((x, y, 0)) #Z=0 para mantenerlo en 2D
+        
+    #definir las conexiones (aristas) entre los vertices
+    for i in range(lados):
+        aristas.append((i,(i + 1) % lados))
+            
+    #cargar los datos en la malla
+    malla.from_pydata(vertices, aristas, [])
+    malla.update()
+    
+#limpiar la escena antes de empezar
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete()
+    
+#llamada a la funcion: un hexagono de radio 5
+crear_poligono_2d("Poligono2D", lados=6, radio=5)    
+ ```
 
